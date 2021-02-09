@@ -485,6 +485,73 @@ type TickerResponse struct {
 	XZECXXBT PairTickerInfo
 	XZECZEUR PairTickerInfo
 	XZECZUSD PairTickerInfo
+	AAVEXBT  PairTickerInfo
+	ALGOUSD  PairTickerInfo
+	ALGOXBT  PairTickerInfo
+	ANTUSD   PairTickerInfo
+	ANTXBT   PairTickerInfo
+	ATOMUSD  PairTickerInfo
+	ATOMXBT  PairTickerInfo
+	BALUSD   PairTickerInfo
+	BALXBT   PairTickerInfo
+	BATUSD   PairTickerInfo
+	BATXBT   PairTickerInfo
+	COMPUSD  PairTickerInfo
+	COMPXBT  PairTickerInfo
+	CRVUSD   PairTickerInfo
+	CRVXBT   PairTickerInfo
+	DAIUSD   PairTickerInfo
+	DOTUSD   PairTickerInfo
+	DOTXBT   PairTickerInfo
+	FILUSD   PairTickerInfo
+	FILXBT   PairTickerInfo
+	FLOWUSD  PairTickerInfo
+	FLOWXBT  PairTickerInfo
+	GRTUSD   PairTickerInfo
+	GRTXBT   PairTickerInfo
+	ICXUSD   PairTickerInfo
+	ICXXBT   PairTickerInfo
+	KAVAUSD  PairTickerInfo
+	KAVAXBT  PairTickerInfo
+	KEEPUSD  PairTickerInfo
+	KEEPXBT  PairTickerInfo
+	KNCUSD   PairTickerInfo
+	KNCXBT   PairTickerInfo
+	KSMUSD   PairTickerInfo
+	KSMXBT   PairTickerInfo
+	LINKUSD  PairTickerInfo
+	LINKXBT  PairTickerInfo
+	LSKUSD   PairTickerInfo
+	LSKXBT   PairTickerInfo
+	MANAUSD  PairTickerInfo
+	MANAXBT  PairTickerInfo
+	NANOUSD  PairTickerInfo
+	NANOXBT  PairTickerInfo
+	OMGUSD   PairTickerInfo
+	OMGXBT   PairTickerInfo
+	OXTUSD   PairTickerInfo
+	OXTXBT   PairTickerInfo
+	PAXGUSD  PairTickerInfo
+	PAXGXBT  PairTickerInfo
+	REPV2USD PairTickerInfo
+	REPV2XBT PairTickerInfo
+	SCUSD    PairTickerInfo
+	SCXBT    PairTickerInfo
+	SNXUSD   PairTickerInfo
+	SNXXBT   PairTickerInfo
+	STORJUSD PairTickerInfo
+	STORJXBT PairTickerInfo
+	TRXUSD   PairTickerInfo
+	TRXXBT   PairTickerInfo
+	UNIUSD   PairTickerInfo
+	UNIXBT   PairTickerInfo
+	USDCUSD  PairTickerInfo
+	WAVESUSD PairTickerInfo
+	WAVESXBT PairTickerInfo
+	XDGUSD   PairTickerInfo
+	XMLNZUSD PairTickerInfo
+	YFIUSD   PairTickerInfo
+	YFIXBT   PairTickerInfo
 }
 
 // DepositAddressesResponse is the response type of a DepositAddresses query to the Kraken API.
@@ -596,45 +663,59 @@ type LedgerInfo struct {
 	Balance big.Float `json:"balance"`
 }
 
+type Direction string
+
+const (
+	Buy  Direction = "buy"
+	Sell Direction = "sell"
+)
+
+type OrderType string
+
 // OrderTypes for AddOrder
 const (
-	OTMarket              = "market"
-	OTLimit               = "limit"                  // (price = limit price)
-	OTStopLoss            = "stop-loss"              // (price = stop loss price)
-	OTTakeProfi           = "take-profit"            // (price = take profit price)
-	OTStopLossProfit      = "stop-loss-profit"       // (price = stop loss price, price2 = take profit price)
-	OTStopLossProfitLimit = "stop-loss-profit-limit" // (price = stop loss price, price2 = take profit price)
-	OTStopLossLimit       = "stop-loss-limit"        // (price = stop loss trigger price, price2 = triggered limit price)
-	OTTakeProfitLimit     = "take-profit-limit"      // (price = take profit trigger price, price2 = triggered limit price)
-	OTTrailingStop        = "trailing-stop"          // (price = trailing stop offset)
-	OTTrailingStopLimit   = "trailing-stop-limit"    // (price = trailing stop offset, price2 = triggered limit offset)
-	OTStopLossAndLimit    = "stop-loss-and-limit"    // (price = stop loss price, price2 = limit price)
-	OTSettlePosition      = "settle-position"
+	Market          OrderType = "market"
+	Limit           OrderType = "limit"             // (price = limit price)
+	StopLoss        OrderType = "stop-loss"         // (price = stop loss price)
+	TakeProfit      OrderType = "take-profit"       // (price = take profit price)
+	StopLossLimit   OrderType = "stop-loss-limit"   // (price = stop loss trigger price, price2 = triggered limit price)
+	TakeProfitLimit OrderType = "take-profit-limit" // (price = take profit trigger price, price2 = triggered limit price)
+	SettlePosition  OrderType = "settle-position"
 )
 
 // OrderDescription represents an orders description
 type OrderDescription struct {
-	AssetPair      string `json:"pair"`
-	Close          string `json:"close"`
-	Leverage       string `json:"leverage"`
-	Order          string `json:"order"`
-	OrderType      string `json:"ordertype"`
-	PrimaryPrice   string `json:"price"`
-	SecondaryPrice string `json:"price2"`
-	Type           string `json:"type"`
+	AssetPair      string    `json:"pair"`
+	Close          string    `json:"close"`
+	Leverage       string    `json:"leverage"`
+	Order          string    `json:"order"`
+	OrderType      OrderType `json:"ordertype"`
+	PrimaryPrice   float64   `json:"price,string"`
+	SecondaryPrice float64   `json:"price2,string"`
+	Type           Direction `json:"type"`
 }
+
+type OrderStatus string
+
+const (
+	Pending  OrderStatus = "pending"  // order pending book entry
+	Open     OrderStatus = "open"     // open order
+	Closed   OrderStatus = "closed"   // closed order
+	Canceled OrderStatus = "canceled" // order canceled
+	Expired  OrderStatus = "expired"  // order expired
+)
 
 // Order represents a single order
 type Order struct {
-	TransactionID  string           `json:"-"`
+	TransactionID  string           `json:"txid"`
 	ReferenceID    string           `json:"refid"`
 	UserRef        int              `json:"userref"`
-	Status         string           `json:"status"`
+	Status         OrderStatus      `json:"status"`
 	OpenTime       float64          `json:"opentm"`
 	StartTime      float64          `json:"starttm"`
 	ExpireTime     float64          `json:"expiretm"`
 	Description    OrderDescription `json:"descr"`
-	Volume         string           `json:"vol"`
+	Volume         float64          `json:"vol,string"`
 	VolumeExecuted float64          `json:"vol_exec,string"`
 	Cost           float64          `json:"cost,string"`
 	Fee            float64          `json:"fee,string"`
@@ -645,6 +726,7 @@ type Order struct {
 	OrderFlags     string           `json:"oflags"`
 	CloseTime      float64          `json:"closetm"`
 	Reason         string           `json:"reason"`
+	Trades         []string         `json:"trades"`
 }
 
 // ClosedOrdersResponse represents a list of closed orders, indexed by id
